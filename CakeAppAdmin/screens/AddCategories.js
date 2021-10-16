@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { StyleSheet, Text, View, Button, SafeAreaView, TextInput, FlatList, Image } from 'react-native'
+import { StyleSheet, Text, View, Button, SafeAreaView, Modal, TextInput, FlatList, Image, StatusBar } from 'react-native'
 import { ListItem, Divider } from 'react-native-elements'
 import { addCategories, getCategories, signout, uploadCake } from '../api/CategoriesApi'
 import firebase from 'firebase';
@@ -9,6 +9,7 @@ import CarryImagePicker from './CarryImagePicker';
 import * as ImagePicker from 'expo-image-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import logo from '../auth/Images/logo.jpg'
+import Header from '../components/Header';
 
 const AddCategories = ({navigation}) => {
 
@@ -17,6 +18,7 @@ const AddCategories = ({navigation}) => {
     const [price, setprice] = useState(null)
     const [image, setImage] = useState(null);
     const [kilos, setkilos] = useState(null)
+    const [modalVisible, setmodalVisible] = useState(false)
 
      const onCategoryReceived = (cakeList) => {
         setcakeList(cakeList)
@@ -85,64 +87,89 @@ const AddCategories = ({navigation}) => {
     return (
         <SafeAreaView>
             <ScrollView>
-            <View style={{width:'50%', justifyContent:'center', alignItems:'center'}}>
-            <Button 
-                title='logout'
-                onPress={()=>{signout(onSignedOut)}}
-                />
-            </View>
 
-            <View >
-        {/* <Button title="Pick an image from camera roll" onPress={pickImage} /> */}
-        <Button
-        title="Pick an image from camera roll"
-        onPress={pickImage}
-         />
-      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-    </View>
+                <StatusBar />
 
+                <Header />
+
+                <View style={{width:'50%', justifyContent:'center', alignItems:'center'}}>
+                {/* <Button 
+                    title='logout'
+                    onPress={()=>{signout(onSignedOut)}}
+                    /> */}
+                </View>
+                <Button
+                    title='ADD'
+                    style={{margin:10}}
+                    onPress={()=>
+                        {setmodalVisible(true)
+                        }}
+                    
+                    />
+
+                <Modal
+                animationType='fade'
+                transparent={false}
+                visible={modalVisible}
+                >
+
+                <View>
+                
+
+                    <View >
+                        {/* <Button title="Pick an image from camera roll" onPress={pickImage} /> */}
             
+                        <Button
+                        title="Pick an image from camera roll"
+                        onPress={pickImage}
+                        />
+                        {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+                    </View>
             
-            <View>
-                <TextInput 
-                style={styles.TextInput1}
-                value={currentFoodItem}
-                onChangeText={(text)=>{setcurrentFoodItem(text)}}
-                />
-            </View>
-            <View>
-                <TextInput 
-                style={styles.TextInput1}
-                value={price}
-                onChangeText={(text)=>{setprice(text)}}
-                />
-            </View>
-            <View>
-                <TextInput 
-                style={styles.TextInput1}
-                value={kilos}
-                onChangeText={(text)=>{setkilos(text)}}
-                />
-            </View>
+                    <View>
+                        <TextInput 
+                        style={styles.TextInput1}
+                        value={currentFoodItem}
+                        onChangeText={(text)=>{setcurrentFoodItem(text)}}
+                        />
+                    </View>
+
+                    <View>
+                        <TextInput 
+                        style={styles.TextInput1}
+                        value={price}
+                        onChangeText={(text)=>{setprice(text)}}
+                        />
+                    </View>
+
+                    <View>
+                        <TextInput 
+                        style={styles.TextInput1}
+                        value={kilos}
+                        onChangeText={(text)=>{setkilos(text)}}
+                        />
+                    </View>
+                
+                
             
-            <View>
-            {/* <ActionButton
-            buttonColor='blue'
-            style={{margin:10}}
-            onPress={()=>
-                {
-                    // navigation.navigate('CakeFormScreen',onCakeAdded),
-        console.log('pressed')}}
-            
-            /> */}
-            {/* <Button
-            title='hii'
-            onPress={()=>
-                {
-                    navigation.navigate('CakeFormScreen',onCakeAdded),
-        console.log('pressed')}}
-            
-            /> */}
+                <View>
+                    {/* <ActionButton
+                    buttonColor='blue'
+                    style={{margin:10}}
+                    onPress={()=>
+                        {
+                            // navigation.navigate('CakeFormScreen',onCakeAdded),
+                console.log('pressed')}}
+                    
+                    /> */}
+                    {/* <Button
+                    title='hii'
+                    onPress={()=>
+                        {
+                            navigation.navigate('CakeFormScreen',onCakeAdded),
+                console.log('pressed')}}
+                    
+                    /> */}
             </View>
             <View>
                 <Button 
@@ -170,9 +197,13 @@ const AddCategories = ({navigation}) => {
                     )
                     onCakeAdded()
                     alert('added')
+                    setmodalVisible(false)
                 }}
                 />
             </View>
+            </View>
+                
+                </Modal>
             
             <FlatList 
             data={cakeList}
@@ -191,7 +222,7 @@ const AddCategories = ({navigation}) => {
                     // />
                     <View
                     onPress={()=>navigation.navigate('CakeDetailsScreen',{cake:item})}
-                    style={{flexDirection:'row'}}
+                    style={{flexDirection:'row',margin:10}}
                     >
                         <View style={styles.imageCon}>
                             <Image
@@ -199,8 +230,9 @@ const AddCategories = ({navigation}) => {
                             source={{uri: item.image}}
                             />
                     </View>
-                    <Text onPress={()=>navigation.navigate('CakeDetailsScreen',{cake:item})}>{item.name}</Text>
-                    <Text>{item.price}</Text>
+                    <Text style={{marginLeft:10}} onPress={()=>navigation.navigate('CakeDetailsScreen',{cake:item})}>{item.name}</Text>
+                    <Text>{item.price}
+                    </Text>
                     </View>
                     
 
@@ -245,8 +277,8 @@ const styles = StyleSheet.create({
     },
 
     tinyLogo: {
-        width: 40,
-        height: 40,
+        width: 60,
+        height: 60,
         alignItems:'center',
         justifyContent:'center',
       },
