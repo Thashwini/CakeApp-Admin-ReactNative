@@ -104,11 +104,13 @@ const AddCategories = ({navigation}) => {
                      quantity: kilos,
                      itemId: 'item' + Math.round(  (Math.random() * Math.pow(10, 6)) + '' + new Date().getTime())
 
-                 },onCakeUpload,{updating:false}
+                 },onCakeAdded,{updating:false}
                  
                 )
-                onCakeAdded()
+                // onCakeAdded()
                 setmodalVisible(false)
+                navigation.navigate('AddCategories')
+                getCategories(onCategoryReceived)
 
 
         }
@@ -247,7 +249,7 @@ const AddCategories = ({navigation}) => {
                 return(
                     
                     // <ListItem 
-                    // title={item.name}
+                    // title={item.name}s
                     // onPress={()=>{}}
                     // color='black'
                     // />

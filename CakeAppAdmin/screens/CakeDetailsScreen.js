@@ -68,7 +68,7 @@ import * as ImagePicker from 'expo-image-picker';
                  id:cake.id
              },onCakeUpdated,{updating:true}
              )
-             alert('UPDATED')
+             
 
 
     }
@@ -152,7 +152,6 @@ import * as ImagePicker from 'expo-image-picker';
                         deleteCake({
                             id:cake.id
                         },onCakeDelete)
-                        alert('DELETEd')
                         }}
                         />
                     </View>
