@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { StyleSheet, Text, View, Button, SafeAreaView, Modal, TextInput, FlatList, Image, StatusBar } from 'react-native'
+import { StyleSheet, Text, View, Button, SafeAreaView, Modal, TextInput, FlatList, Image, StatusBar, TouchableOpacity } from 'react-native'
 import { ListItem, Divider } from 'react-native-elements'
 import { addCategories, getCategories, signout, uploadCake } from '../api/CategoriesApi'
 import firebase from 'firebase';
@@ -10,6 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { ScrollView } from 'react-native-gesture-handler';
 import logo from '../auth/Images/logo.jpg'
 import Header from '../components/Header';
+import { AntDesign } from '@expo/vector-icons'; 
 
 const AddCategories = ({navigation}) => {
 
@@ -78,7 +79,44 @@ const AddCategories = ({navigation}) => {
 
       const onCakeUpload = () => {
           console.log('hi')
+          alert('ADDED')
       }
+
+      const addingCake = () => {
+          if(currentFoodItem===null){
+              alert('Name Required')
+          }
+          else if(price===null){
+            alert('Price Required')
+        }
+        else if(parseInt(price)<0){
+            alert('Invalid Price')
+        }
+        else if(kilos===null){
+            alert('Quantity Required')
+        }
+        
+        else{
+            uploadCake({
+                     name: currentFoodItem,
+                     price: price,
+                     image: image,
+                     quantity: kilos,
+                     itemId: 'item' + Math.round(  (Math.random() * Math.pow(10, 6)) + '' + new Date().getTime())
+
+                 },onCakeUpload,{updating:false}
+                 
+                )
+                onCakeAdded()
+                setmodalVisible(false)
+
+
+        }
+      }
+
+      
+
+       
 
     //   const setCakeImage = (image) => {
 
@@ -90,7 +128,14 @@ const AddCategories = ({navigation}) => {
 
                 <StatusBar />
 
-                <Header />
+                <View style={styles.btn2}>
+            <Button 
+            color= '#B9AB98'
+                title='logout'
+                onPress={()=>{signout(onSignedOut)}}
+                />
+            
+        </View>
 
                 <View style={{width:'50%', justifyContent:'center', alignItems:'center'}}>
                 {/* <Button 
@@ -98,14 +143,13 @@ const AddCategories = ({navigation}) => {
                     onPress={()=>{signout(onSignedOut)}}
                     /> */}
                 </View>
-                <Button
-                    title='ADD'
-                    style={{margin:10}}
-                    onPress={()=>
-                        {setmodalVisible(true)
-                        }}
+                <TouchableOpacity style={styles.btn}
+                onPress={()=>{setmodalVisible(true)}}
+                >
+                    <AntDesign name="pluscircleo" size={24} color="white" />
+                    <View><Text style={{fontSize:16, marginLeft:10, color:'white'}}>ADD PRODUCT</Text></View>
                     
-                    />
+                </TouchableOpacity>
 
                 <Modal
                 animationType='fade'
@@ -114,22 +158,23 @@ const AddCategories = ({navigation}) => {
                 >
 
                 <View>
-                
-
                     <View >
                         {/* <Button title="Pick an image from camera roll" onPress={pickImage} /> */}
-            
+                        <View style={styles.btn2}>
                         <Button
-                        title="Pick an image from camera roll"
+                        title="Pick Image"
+                        color= '#B9AB98'
                         onPress={pickImage}
                         />
-                        {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+                        </View>
+                        {image && <Image style={styles.tinyLogo2} source={{ uri: image }} style={{ width: 200, height: 200 }} />}
                     </View>
             
                     <View>
                         <TextInput 
                         style={styles.TextInput1}
                         value={currentFoodItem}
+                        placeholder='Enter Name'
                         onChangeText={(text)=>{setcurrentFoodItem(text)}}
                         />
                     </View>
@@ -138,6 +183,7 @@ const AddCategories = ({navigation}) => {
                         <TextInput 
                         style={styles.TextInput1}
                         value={price}
+                        placeholder='Enter Price'
                         onChangeText={(text)=>{setprice(text)}}
                         />
                     </View>
@@ -146,61 +192,46 @@ const AddCategories = ({navigation}) => {
                         <TextInput 
                         style={styles.TextInput1}
                         value={kilos}
+                        placeholder='Enter Quantity'
                         onChangeText={(text)=>{setkilos(text)}}
                         />
                     </View>
-                
-                
-            
                 <View>
-                    {/* <ActionButton
-                    buttonColor='blue'
-                    style={{margin:10}}
-                    onPress={()=>
-                        {
-                            // navigation.navigate('CakeFormScreen',onCakeAdded),
-                console.log('pressed')}}
-                    
-                    /> */}
-                    {/* <Button
-                    title='hii'
-                    onPress={()=>
-                        {
-                            navigation.navigate('CakeFormScreen',onCakeAdded),
-                console.log('pressed')}}
-                    
-                    /> */}
             </View>
-            <View>
-                <Button 
-                title='submit'
-                style={styles.btn}
-                onPress={()=>{
-                    // addCategories({
+            <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                <View style={styles.btn2}>
+                    <Button 
+                    title='submit'
+                    style={styles.btn}
+                    color= '#B9AB98'
+                    onPress={()=>{
+                        addingCake()
+                    // uploadCake({
                     //     name: currentFoodItem,
                     //     price: price,
                     //     image: image,
-                    //     itemId: 'cake' + Math.round(  (Math.random() * Math.pow(10, 6)) + '' + new Date().getTime())
+                    //     quantity: kilos,
+                    //     itemId: 'item' + Math.round(  (Math.random() * Math.pow(10, 6)) + '' + new Date().getTime())
 
-                    // },
+                    // },onCakeUpload,{updating:false}
                     // // onCakeAdded()
                     // )
-                    uploadCake({
-                        name: currentFoodItem,
-                        price: price,
-                        image: image,
-                        quantity: kilos,
-                        itemId: 'item' + Math.round(  (Math.random() * Math.pow(10, 6)) + '' + new Date().getTime())
-
-                    },onCakeUpload,{updating:false}
                     // onCakeAdded()
-                    )
-                    onCakeAdded()
-                    alert('added')
-                    setmodalVisible(false)
-                }}
-                />
-            </View>
+                    // alert('added')
+                    
+                    }}
+                    />
+                </View>
+
+                <View style={styles.btn2}>
+                    <Button 
+                    title='BACK'
+                    style={styles.btn}
+                    color= 'black'
+                    onPress={()=>{setmodalVisible(false)}}
+                    />
+                </View>
+                </View>
             </View>
                 
                 </Modal>
@@ -221,18 +252,27 @@ const AddCategories = ({navigation}) => {
                     // color='black'
                     // />
                     <View
-                    onPress={()=>navigation.navigate('CakeDetailsScreen',{cake:item})}
-                    style={{flexDirection:'row',margin:10}}
+                    style={{flexDirection:'row',margin:10, marginLeft:20}}
                     >
                         <View style={styles.imageCon}>
                             <Image
                             style={styles.tinyLogo}
                             source={{uri: item.image}}
                             />
-                    </View>
-                    <Text style={{marginLeft:10}} onPress={()=>navigation.navigate('CakeDetailsScreen',{cake:item})}>{item.name}</Text>
-                    <Text>{item.price}
-                    </Text>
+                        </View>
+                        <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                            <View style={{marginLeft:20}}>
+                            <Text style={{marginLeft:10, fontSize:16, marginRight:10, alignItems:'center'}} >{item.name}</Text>
+                            <Text style={{marginLeft:10, marginTop:10, alignItems:'center'}} >LKR {item.price}.00</Text>
+                            </View>
+                            <View style={styles.btn2}>
+                                <Button
+                                color= '#B9AB98'
+                                title='VIEW' 
+                                onPress={()=>navigation.navigate('CakeDetailsScreen',{cake:item})}
+                                />
+                            </View>
+                        </View>
                     </View>
                     
 
@@ -283,12 +323,34 @@ const styles = StyleSheet.create({
         justifyContent:'center',
       },
 
-    // btn: {
+    btn: {
         
-    //     marginLeft:40,
-    //     marginRight:40,
-    //     marginHorizontal: 10,
-    //     margin:20,
-    //     borderRadius:10,
-    // },
+        marginLeft:10,
+        marginRight:10,
+        marginHorizontal: 10,
+        margin:20,
+        borderRadius:20,
+        padding:10,
+        flexDirection:'row',
+        backgroundColor:'#B9AB98',
+        alignItems: 'center',
+        justifyContent:'center',
+    },
+
+    btn2: {
+        
+        marginLeft:10,
+        marginRight:10,
+        borderRadius:20,
+        padding:10,
+        flexDirection:'row',
+        alignItems: 'center',
+        justifyContent:'center',
+    },
+
+    tinyLogo2: {
+        width: 100,
+        height: 100,
+        borderRadius:20,
+      },
 })

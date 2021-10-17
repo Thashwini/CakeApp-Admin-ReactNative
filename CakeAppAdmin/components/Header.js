@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native'
 import { signout } from '../api/CategoriesApi'
 
-const Header = () => {
+const Header = ({navigation}) => {
 
     const onSignedOut = () => {
         console.log('signed-out')

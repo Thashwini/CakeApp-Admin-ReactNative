@@ -66,6 +66,7 @@ export function uploadCake(cake, onCakeUpload, {updating}){
 
                     if(updating){
                         console.log('updating');
+                        updateCake(cake, onCakeUpload)
 
                     }else{
                         console.log('adding')
@@ -78,6 +79,7 @@ export function uploadCake(cake, onCakeUpload, {updating}){
         console.log('Skipping image upload')
         if(updating){
             console.log('updating');
+            updateCake(cake, onCakeUpload)
 
         }else{
             console.log('adding')
@@ -104,7 +106,8 @@ export function updateCake(cake, updateComplete){
     cake.updatedAt = firebase.firestore.FieldValue.serverTimestamp()
     firebase.firestore()
     .collection('Categories')
-    .set(cake).doc()
+    .doc(cake.id)
+    .set(cake)
     .then(()=>updateComplete(cake))
     .catch((error)=>console.log(error))
       
@@ -123,4 +126,15 @@ export async function getCategories(categoryRetreived){
     })
 
     categoryRetreived(cakeList)
+}
+
+export function deleteCake(cake, deleteComplete){
+    
+    firebase.firestore()
+    .collection('Categories')
+    .doc(cake.id)
+    .delete()
+    .then(()=>deleteComplete())
+    .catch((error)=>console.log(error))
+      
 }
